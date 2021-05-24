@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AIX Bot</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+
+    <style>
+
+        body {
+            background-color: #F5F5F5; /* Цвет фона веб-страницы */
+            width: 400px;
+            zoom: 2.5;
+        }
+
+        .mainTable {
+			width: 100%;
+			height: 100%;
+            border: 1px solid #979797;
+            background-color: #FFFFFF;
+		}
+
+        .wparTable {
+            width: 100%;
+			height: 100%;
+            margin-top: 10px;
+            border: 1px solid #979797;
+            background-color: #FFFFFF;
+        }
+
+
+
+        .wparTableInfo tr {
+            border: 1px solid #979797;
+            margin-top: 0px;
+        }
+
+
+
+        .photo_cell {
+            width: 10%;
+            height: 10%;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .avatar {
+            width: 100px;
+            height: 100px;
+            object-fit:cover;
+
+        }
+
+        .name {
+            font-family: "HelveticaNeue-Thin", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+            font-size: 60pt;
+            color: #1D2129;
+        }
+
+        .role {
+            font-family: "HelveticaNeue-Thin", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+            font-size: 40pt;
+            color: #1D2129;
+        }
+
+        .closeButton {
+            background: #0084FF;
+            width: 100%;
+            height: 80px;
+            font-family: "HelveticaNeue-Thin", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+            font-size: 40pt;
+            font-weight : bold;
+            color: #FFFFFF;
+            border: 2px solid #0084FF;
+            margin-top: 10px;
+        }
+
+         .closeButton:hover, .buttonDown:hover {
+            opacity: 0.6;
+        }
+
+        .wparTableInfo {
+            width: 100%;
+            height: 60px;
+        }
+
+        .buttonDown {
+            text-align: center;
+            width: 60px;
+
+        }
+
+        .showButtonDown {
+            width: 60px;
+            font-size: 60pt;
+            font-weight : bold;
+        }
+
+        .switchWparField {
+            text-align: center;
+            width: 60px;
+            vertical-align: middle;
+        }
+
+        .alignSwitch {
+            text-align: center;
+
+            margin-top: 0px;
+            zoom: 2;
+            vertical-align: middle;
+        }
+
+        .statusField {
+            width: 45px;
+            text-align: center;
+        }
+        .greenDot {
+          height: 25px;
+          width: 25px;
+          background-color: #4BCC1F;
+          border-radius: 50%;
+          display: inline-block;
+          vertical-align: middle;
+        }
+
+        .headText {
+            margin-left: 5px;
+        }
+
+
+    </style>
+    <script type="text/javascript" href="javascript.js"></script>
+
+</head>
+<body>
+    <script type="text/javascript">
+
+        function httpGet(theUrl)
+        {
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.open("GET", theUrl, false); // false for synchronous request
+            xmlHttp.send(null);
+            return xmlHttp.responseText;
+        }
+        (function(d, s, id){
+              var js, fjs = d.getElementsByTagName(s)[0];
+              if (d.getElementById(id)) {
+                  return;
+              }
+              js = d.createElement(s);
+              js.id = id;
+              js.src = "//connect.facebook.net/en_US/messenger.Extensions.js";
+              fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'Messenger'));
+
+        window.extAsyncInit = () => {
+        // TODO: How to parse env file from here?
+        MessengerExtensions.getSupportedFeatures(function success(result) {
+            let features = result.supported_features;
+            console.log("Supported features: " + features);
+            if (features.includes("context")) {
+                MessengerExtensions.getContext('1605431059642073',
+                    function success(thread_context) {
+                        // success
+                       document.getElementById("psid").value = thread_context.psid;
+                       console.log("thread_context: " + thread_context.thread_type + ", " + thread_context.psid);
+
+                    },
+                    function error(err) {
+                        // error
+                        console.log("Error: " + err);
+                        document.write("Error: " + err);
+                    }
+                );
+            }
+        }, function error(err) {
+            // error retrieving supported features
+            console.log("Error: " + err);
+            document.write("Error: " + err);
+        });
+        MessengerExtensions.getGrantedPermissions(function (permissions_response) {
+          let permission = permissions_response.permissions // list of permissions granted
+          console.log("Permissions: " + permission);
+
+        }, function() {
+          // An error occurred
+            console.log("Error: " + err);
+            document.write("Error: " + err);
+        });
+
+
+         document.getElementById('submitButton').addEventListener('click', () => {
+                window.close();
+                window.replace('https://www.messenger.com/closeWindow/?image_url=https://lh3.googleusercontent.com/proxy/7RHbqb2kEu8iIcMa7htxPcUCsHQ4pGAVxppkE_3D5nzjP4AloUBhwJakbm2tX-kLriE-xlYIXoBL4Ja6-kLcwn4K_tftOqHwD--SzpNJyz4C9eE&display_text=dldldld')
+                MessengerExtensions.requestCloseBrowser(function success() {
+                    console.log("Webview closing");
+                    window.close();
+                    window.replace('https://www.messenger.com/closeWindow/?image_url=https://lh3.googleusercontent.com/proxy/7RHbqb2kEu8iIcMa7htxPcUCsHQ4pGAVxppkE_3D5nzjP4AloUBhwJakbm2tX-kLriE-xlYIXoBL4Ja6-kLcwn4K_tftOqHwD--SzpNJyz4C9eE&display_text=DISPLAY_TEXT')
+                }, function error(err) {
+                    console.log("Error: " + err);
+                });
+            });
+
+    };
+
+    </script>
+<!--
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '1605431059642073',
+          cookie     : true,
+          xfbml      : true,
+          version    : 'v10.0'
+        });
+
+        FB.AppEvents.logPageView();
+
+      };
+
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "https://connect.facebook.net/en_US/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+      FB.AppEvents.logPageView();
+    </script>
+    -->
+    <script>
+        !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '477830156922114');
+    fbq('track', 'PageView');
+    </script>
+    <noscript>JavaScript не працює</noscript>
+    <table class="mainTable">
+        <tr>
+            <!-- {{profile_pic}}-->
+            <td class="photo_cell">
+                <img class="avatar" src='{{profile_pic}}' alt="profile photo">
+            </td>
+            <td>
+                <div class="headText">
+                    <!-- {{first_name}}   {{last_name}}-->
+                <div class="name">{{first_name}} {{last_name}}</div>
+                <div class="role"><p>Роль: викладач</p></div>
+                <div class="role"><p>psid: {{psid}}</p></div>
+                </div>
+
+            </td>
+        </tr>
+    </table>
+    <form action="" method="get">
+             <table class="wparTable">
+                <tr><td>
+                    {%for i in range(mlistlen)%}
+
+                    <table class="wparTableInfo">
+                            <tr>
+                                {% if wpars[i][1] == "A" %}
+                                <td class="statusField">
+                                    <span class="greenDot"></span>
+                                </td>
+                                {% elif wpars[i][1] == "D" %}
+                                <td class="statusField">{{wpars[i][1]}}</td>
+                                {% else %}
+                                <td class="statusField">
+                                    <div class="spinner-grow text-warning" role="status">
+                                      <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </td>
+                                {% endif %}
+                                <td class="wparNameField">{{wpars[i][0]}}</td>
+                                <td class="switchWparField">
+                                    <div class="form-check form-switch alignSwitch">
+                                        {% if wpars[i][1] == "A" %}
+                                        <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault{{wpars[i][0]}}" checked>
+                                        {% elif wpars[i][1] == "D" %}
+                                        <input class="form-check-input" type="checkbox" id="flexSwitchCheck{{wpars[i][0]}}">
+                                         {% endif %}
+                                        <!--<label class="form-check-label" for="flexSwitchCheckDefault"></label>-->
+                                    </div>
+                                </td>
+                                <td class="buttonDown">
+                                    <button class="btn btn-primary showButtonDown" type="button" data-bs-toggle="collapse" data-bs-target="#multiCollapse{{wpars[i][0]}}" aria-expanded="false" aria-controls="multiCollapse{{wpars[i][0]}}">
+                                        ▾
+                                    </button>
+                                </td>
+                            </tr>
+                        </table>
+
+                    <div class="collapse multi-collapse" id="multiCollapse{{wpars[i][0]}}">
+                      <div class="card card-body">
+                        <table class="">
+                            <tr>
+                                {% if wpars[i][2] == "S" %}
+                                <td>Тип WPAR: shared</td>
+                                {% elif wpars[i][2] == "A" %}
+                                <td>Тип WPAR: applicaton</td>
+                                {% endif %}
+                                <td>WPAR hostname: {{wpars[i][3]}}</td>
+                                <td>WPAR directory: {{wpars[i][4]}}</td>
+                            </tr>
+                        </table>
+                      </div>
+                    </div>
+                    {%endfor%}
+                </td></tr>
+                <tr><td>
+                    <input type="hidden" name="psid" id="psid" value="none">
+                    </td></tr>
+                 <tr><td>
+                                <input class="closeButton" type="submit" value="Зберегти" id="submitButton">
+                     <script type="text/javascript">
+  $('#$submitButton').click(function() {
+    fbq('trackCustom', 'Save', {value: 1, changes_saved: true});
+  });
+</script>
+
+                </td></tr>
+            </table>
+        </form>
+
+
+</body>
+</html>
